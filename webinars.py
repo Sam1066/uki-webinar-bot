@@ -1,6 +1,7 @@
 import feedparser
 import requests
 import json
+import re
 from dateutil import parser
 from datetime import datetime
 from datetime import timedelta
@@ -30,7 +31,7 @@ for y in range (0,10):
 	title.append(rss['entries'][y]['title'])
 	dates.append(rss['entries'][y]['summary'])
 	link.append(rss['entries'][y]['links'][0]['href'])
-	newdates.append(parser.parse(rss['entries'][y]['summary']))
+	newdates.append(parser.parse(re.sub('\s\S\s\S(.*)', '', rss['entries'][y]['summary'])))
 
 # check which dates are in the next 7 days
 for x in range (0, len(dates)):
@@ -55,7 +56,7 @@ rooms = [item.get('id') for item in room_parsed['items']]
 for x in range(0, len(rooms)):
 	payload = {
 		"roomId": rooms[x],
-		#"toPersonEmail": 'sahastin@cisco.com',
+		# "toPersonEmail": 'sahastin@cisco.com',
 		"markdown": intro,
 		}
 	response = requests.post(url_message, data=json.dumps(payload), headers=headers)
